@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oyun</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 300px;
+            width: 100%;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: calc(100% - 22px);
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="startGameSection">
+        <button id="startGameBtn">Oyuna Başla</button>
+    </div>
+    
+    <div id="enterNameSection" class="hidden">
+        <input type="text" id="userName" placeholder="İsim Giriniz">
+        <button id="submitNameBtn">Gönder</button>
+    </div>
+
+    <div id="enterResponseSection" class="hidden">
+        <input type="text" id="userResponse" placeholder="Cevap Giriniz">
+        <button id="submitResponseBtn">Gönder</button>
+    </div>
+
+    <div id="actionButtonsSection" class="hidden">
+        <button id="continueBtn">Devam Et</button>
+        <button id="listenBtn">Sesli Dinle</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('startGameBtn').addEventListener('click', function() {
+        sendData('a');
+        this.parentElement.classList.add('hidden');
+        document.getElementById('enterNameSection').classList.remove('hidden');
+    });
+
+    document.getElementById('submitNameBtn').addEventListener('click', function() {
+        const userName = document.getElementById('userName').value;
+        sendData(userName);
+        document.getElementById('userName').value = ''; // Clear the input
+        document.getElementById('enterNameSection').classList.add('hidden');
+        document.getElementById('enterResponseSection').classList.remove('hidden');
+    });
+
+    document.getElementById('submitResponseBtn').addEventListener('click', function() {
+        const userResponse = document.getElementById('userResponse').value;
+        sendData(userResponse);
+        document.getElementById('userResponse').value = ''; // Clear the input
+        document.getElementById('enterResponseSection').classList.add('hidden');
+        document.getElementById('actionButtonsSection').classList.remove('hidden');
+    });
+
+    document.getElementById('continueBtn').addEventListener('click', function() {
+        sendData('b');
+        document.getElementById('actionButtonsSection').classList.add('hidden');
+        document.getElementById('enterResponseSection').classList.remove('hidden');
+    });
+
+    document.getElementById('listenBtn').addEventListener('click', function() {
+        sendData('c');
+    });
+
+    function sendData(data) {
+    // `data` parametresini doğrudan `body` içinde kullanabilmek için uygun formata çeviriyoruz.
+    const formattedData = `userData=${encodeURIComponent(data)}`;
+
+    fetch('https://deneme102-9b061acedaf9.herokuapp.com/submit-data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formattedData
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log('Veri başarıyla gönderildi:', data);
+        // Eğer gönderilen veriye göre bir sonraki adım varsa, burada gerçekleştirilebilir.
+    })
+    .catch(error => {
+        console.error('Hata:', error);
+        alert('Bir hata oluştu, lütfen daha sonra tekrar deneyin.');
+    });
+}
+
+</script>
+</body>
+</html>
